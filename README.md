@@ -19,6 +19,14 @@ When a user visits the root URL (/), it returns the current timestamp and the us
 
 **JSON:** The response from the application is returned as a JSON object
 
+**Terraform:** Used to provision and manage AWS infrastructure as code.
+
+**AWS:** Terraform deploys the microservice using AWS EC2 and related resources.
+
+**AWS ECS + ALB:** Runs the container in a scalable and accessible setup
+
+**IAM, VPC, Security Groups:** Infrastructure components provisioned via Terraform modules
+
 # Purpose
 
 This project demonstrates:
@@ -31,8 +39,29 @@ This project demonstrates:
 - [Docker](https://docs.docker.com/get-docker/)
 - [Python 3.9](https://www.python.org/downloads/) (for local testing)
 - [Git](https://git-scm.com/downloads)
+- [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
+- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
 
-# Installation Instructions
+## AWS Credential Setup 
+Terraform needs access to your AWS account.
+### Option 1: Use AWS CLI to configure credentials (Recommended)
+```bash
+aws configure
+```
+Provide your:
+AWS Access Key ID
+
+AWS Secret Access Key
+
+Default region (e.g., us-east-1)
+
+Output format (e.g., json)
+
+This stores credentials in ``` ~/.aws/credentials ``` and Terraform will use them automatic
+
+# Deployment Guide
+## Option 1: Run the App Locally Using Docker
+
 ## 1. Clone the Repository
 First, you need to clone the project repository to your local machine. Open a terminal and run the following command:
 
@@ -58,16 +87,56 @@ This command will create a Docker image named simpletimeservice based on the Doc
 docker run -p 8080:8080 simpletimeservice
 ```
 • This will run the container and map port 8080 inside the container to port 8080 on your machine.
+
 • The application will be available at http://localhost:8080
 
+## Option 2: Deploy the App to AWS Using Terraform
+## 1. Navigate to Terraform Folder
+```bash
+cd terraform
+```
+## 2. Initialize Terraform 
+```bash
+terraform init
+```
+##  3. View the Plan 
+```bash
+terraform plan
+```
+## 4. Apply the Infrastructure
+```bash
+terraform apply
+```
+• After apply is complete, Terraform will show the output like this
+
+```alb_dns_name = http://simple-time-service-lb-1234567890.us-east-1.elb.amazonaws.com```
+
+Open this in your browser. You’ll see the current server time!
+
+### Tearing Down the Infrastructure
+When you're done, remove all AWS resources to avoid charges:
+```bash
+terraform destroy
+```
 # Repository Structure
 Here is a quick overview of the project structure:
 ```bash
 SimpleTimeService/
 ├── app/
-│   └── main.py              # The main Python code for the web service
-├── Dockerfile               # The Dockerfile used to build the Docker image
-└── README.md                # The documentation for this project
+│   └── main.py                # Python app code
+├── Dockerfile                 # Docker image configuration
+├── .dockerignore              # Docker ignore file
+├── README.md                  # This documentation
+└── Terraform/                 # All infrastructure code (Task 2)
+    ├── alb.tf                 # Load balancer config
+    ├── ecs.tf                 # ECS cluster and service definition
+    ├── iam.tf                 # IAM roles and policies
+    ├── main.tf                # Main entry point for Terraform
+    ├── network.tf             # Subnets, IGWs, route tables
+    ├── outputs.tf             # Outputs like ECS/ALB IPs
+    ├── security.tf            # Security groups
+    ├── variables.tf           # All input variables
+    └── vpc.tf                 # VPC definition
 ```
 
          
