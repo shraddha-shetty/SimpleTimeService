@@ -1,3 +1,4 @@
+# Security group for ALB to allow HTTP traffic
 resource "aws_security_group" "alb_sg" {
   name        = "alb-sg"
   description = "Allow HTTP"
@@ -18,6 +19,7 @@ resource "aws_security_group" "alb_sg" {
   }
 }
 
+# Security group for ECS tasks, allows traffic from ALB
 resource "aws_security_group" "ecs_sg" {
   name        = "ecs-sg"
   description = "Allow inbound from ALB"

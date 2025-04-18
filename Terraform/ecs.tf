@@ -1,7 +1,9 @@
+# Create an ECS Cluster
 resource "aws_ecs_cluster" "main" {
   name = "simple-time-cluster"
 }
 
+# Define ECS Task with container settings
 resource "aws_ecs_task_definition" "simple_time" {
   family                   = "simple-time"
   network_mode             = "awsvpc"
@@ -25,6 +27,7 @@ resource "aws_ecs_task_definition" "simple_time" {
   ])
 }
 
+# Create an ECS Service to run the task on Fargate
 resource "aws_ecs_service" "simple_time_service" {
   name            = "simple-time-service"
   cluster         = aws_ecs_cluster.main.id

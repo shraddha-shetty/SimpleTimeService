@@ -1,11 +1,13 @@
+# Create an Application Load Balancer
 resource "aws_lb" "simple_time_service_lb" {
   name               = "simple-time-service-lb"
   internal           = false
   load_balancer_type = "application"
-  subnets            = [aws_subnet.public_1.id, aws_subnet.public_2.id]
+  subnets            = [aws_subnet.public_1.id, aws_subnet.public_2.id]  # Deploy in public subnets
   security_groups    = [aws_security_group.alb_sg.id]
 }
 
+# Define a target group for ECS service                         
 resource "aws_lb_target_group" "simple_time_tg" {
   name     = "simple-time-tg"
   port     = 8080
@@ -23,6 +25,7 @@ resource "aws_lb_target_group" "simple_time_tg" {
   }
 }
 
+# Create a listener on port 80 to forward traffic to the target group
 resource "aws_lb_listener" "http" {
   load_balancer_arn = aws_lb.simple_time_service_lb.arn
   port              = 80
